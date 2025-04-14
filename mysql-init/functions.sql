@@ -183,3 +183,49 @@ select calcula_total_gasto(3);
         return faixa;
 end; $$
 delimiter ;
+
+-- ATIVIDADE
+DELIMITER $$
+
+CREATE FUNCTION total_ingressos_vendidos(pid_evento INT)
+RETURNS INT
+READS SQL DATA
+NOT DETERMINISTIC
+BEGIN
+    DECLARE total_vendidos INT;
+
+    SELECT IFNULL(SUM(ic.quantidade), 0) INTO total_vendidos
+    FROM ingresso_compra ic
+    JOIN ingresso i ON ic.fk_id_ingresso = i.id_ingresso
+    WHERE i.fk_id_evento = pid_evento;
+
+    RETURN total_vendidos;
+END $$
+
+DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE FUNCTION renda_total_evento(pid_evento INT)
+RETURNS DECIMAL(10, 2)
+READS SQL DATA
+NOT DETERMINISTIC 
+BEGIN
+    DECLARE renda_total DECIMAL(10, 2);
+
+    SELECT IFNULL(SUM(i.preco * ic.quantidade), 0.00) INTO renda_total
+    FROM ingresso_compra ic
+    JOIN ingresso i ON ic.fk_id_ingresso = i.id_ingresso
+    WHERE i.fk_id_evento = pid_evento;
+
+    RETURN renda_total;
+END $$
+
+DELIMITER ;
+
+
+
+
+
+
