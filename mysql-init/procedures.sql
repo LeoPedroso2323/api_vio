@@ -48,13 +48,13 @@ end;
 
 delimiter ;
 
-----------------------------------------------------------------------------------------------
+
 
 show procedure status where db = 'vio_leonardo';
 set @total = 0;
 call total_ingressos_usuario (2, @total);
 
-----------------------------------------------------------------------------------------------
+
 
 delimiter //
 
@@ -70,7 +70,7 @@ end; //
 
 delimiter ;
 
-----------------------------------------------------------------------------------------------
+
 
 -- Tabela para testar a clausula
 create table log_evento (
@@ -101,6 +101,32 @@ set global log_bin_trust_function_creators = 1;
 
 select registrar_log_evento('teste') as log;
 
------------------------------------------------------------------------------------------------
+-- Procedure para resumo do usuário
+delimiter $$
 
-C
+DELIMITER $$
+
+CREATE PROCEDURE resumo_usuario(IN pid INT)
+BEGIN
+    DECLARE nome VARCHAR(100);
+    DECLARE email VARCHAR(100);
+    DECLARE totalrs DECIMAL(10, 2);
+    DECLARE faixa VARCHAR(20);
+
+    -- Busca o nome e o email do usuário
+    SELECT u.name, u.email INTO nome, email
+    FROM usuario u
+    WHERE u.id_usuario = pid;
+
+    -- Chamada das funções já criadas
+    SET totalrs = calcula_total_gasto(pid);
+    SET faixa = buscar_faixa_etaria_usuario(pid);
+
+    -- Exibe os dados formatados
+    SELECT nome AS nome_usuario,
+           email AS email_usuario,
+           totalrs AS total_gasto,
+           faixa AS faixa_etaria;
+END $$
+
+DELIMITER ;
