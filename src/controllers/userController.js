@@ -93,13 +93,16 @@ module.exports = class userController {
     }
   }
   static async deleteUser(req, res) {
-    const userId = req.params.id;
+    const userId = req.params.id_usuario;
     const query = `DELETE FROM usuario WHERE id_usuario = ?`;
     const values = [userId];
 
     try {
       connect.query(query, values, function (err, results) {
         if (err) {
+          if(err.code === "ER_ROW_IS_REFERENCED_2"){
+            return res.status(400).json({ error: "Usuário Tem Compra" });
+        }
           console.error(err);
           return res.status(500).json({ error: "Erro interno do servidor" });
         }
