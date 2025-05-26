@@ -1,6 +1,6 @@
--- create database vio_leonardo;
+create database vio_leonardo;
 
--- use vio_leonardo;
+use vio_leonardo;
 
 create table usuario (
     id_usuario int auto_increment primary key,
