@@ -62,7 +62,7 @@ insert into evento (nome, data_hora, local, descricao, fk_id_organizador) values
     ('Festival de Verão', '2024-12-31 07:00:00', 'Praia Central', 'Evento de Verão', '1'),
     ('Congresso de Tecnologia', '2024-12-31 07:00:00', 'Centro de Convenções', 'Evento de Tecnologia', '2'),
     ('Show Internacional', '2024-12-31 07:00:00', 'Arena Principal', 'Evento Internacional', '3'),
-    ('Feira Cultural de Inverno', '2025-07-20 18:00:00', 'Parque Municipal', 'Evento cultural com música e gastronomia', 1);    
+    ('Feira Cultural de Inverno', '2025-08-20 18:00:00', 'Parque Municipal', 'Evento cultural com música e gastronomia', 2);    
 
 create table ingresso (
     id_ingresso int auto_increment primary key,
@@ -77,7 +77,8 @@ insert into ingresso (preco, tipo, fk_id_evento) values
     (150, 'PISTA', '1'),
     (200, 'PISTA', '2'),
     (600, 'VIP', '3'),
-    (250, 'PISTA', '3');
+    insert into ingresso (preco, tipo, fk_id_evento) values
+    (250, 'PISTA', '5');
 
 create table compra(
     id_compra int auto_increment primary key,
