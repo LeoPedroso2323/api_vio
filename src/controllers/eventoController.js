@@ -4,14 +4,15 @@ module.exports = class eventoController {
   // criação de um evento
   static async createEvento(req, res) {
     const { nome, descricao, data_hora, local, fk_id_organizador } = req.body;
+    const imagem = req.file.buffer|| null;
 
     if (!nome || !descricao || !data_hora || !local || !fk_id_organizador) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = ` INSERT INTO evento (nome,descricao,data_hora,local,fk_id_organizador) VALUES (?,?,?,?,?)`;
-    const values = [nome, descricao, data_hora, local, fk_id_organizador];
+    const query = ` INSERT INTO evento (nome,descricao,data_hora,local,fk_id_organizador, imagem) VALUES (?,?,?,?,?,?)`;
+    const values = [nome, descricao, data_hora, local, fk_id_organizador, imagem];
     try {
       connect.query(query, values, (err) => {
         if (err) {
@@ -213,4 +214,19 @@ module.exports = class eventoController {
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   } // fim do 'getEventosPorData7Dias'
+
+  static async getImagemEvento(req,res){
+    const id = req.params.id;
+
+    const query = "SELECT imagem FROM evento WHERE id_evento=?";
+    connect.query(query,[id],(err,results)=>{
+      if(err|| results.length === 0 || !results[0].imagem){
+        return res.status(404).send("Imagem não foi encontrada");
+      }
+      res.set("Content-Type", "image/png");
+      res.send(results[0].imagem);
+    })
+
+
+  }
 };
