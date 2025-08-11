@@ -4,15 +4,16 @@ module.exports = class eventoController {
   // criação de um evento
   static async createEvento(req, res) {
     const { nome, descricao, data_hora, local, fk_id_organizador } = req.body;
-    const imagem = req.file.buffer|| null;
+    const imagem = req.file?.buffer || null;
+    const tipoImagem = req.file?.mimetype || null;
 
     if (!nome || !descricao || !data_hora || !local || !fk_id_organizador) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = ` INSERT INTO evento (nome,descricao,data_hora,local,fk_id_organizador, imagem) VALUES (?,?,?,?,?,?)`;
-    const values = [nome, descricao, data_hora, local, fk_id_organizador, imagem];
+    const query = ` INSERT INTO evento (nome,descricao,data_hora,local,fk_id_organizador,imagem) VALUES (?,?,?,?,?,?)`;
+    const values = [nome, descricao, data_hora, local, fk_id_organizador,imagem, tipoImagem];
     try {
       connect.query(query, values, (err) => {
         if (err) {
@@ -119,6 +120,10 @@ module.exports = class eventoController {
           console.log(err);
           return res.status(500).json({ error: "Erro ao buscar eventos" });
         }
+
+      
+
+        
         const dataEvento = new Date(results[0].data_hora);
         const dia = dataEvento.getDate();
         const mes = dataEvento.getMonth() + 1;
@@ -183,11 +188,24 @@ module.exports = class eventoController {
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   } // fim do 'getEventosPorData'
+  static async getImagemEvento(req,res){
+    const id = req.params.id;
+
+    const query = "SELECT imagem FROM  evento where id_evento=?";
+    connect.query(query,[id],(err,results)=>{
+      if(err|| results.length === 0 || !results[0].imagem){
+        return res.status(404).send("Imagem não foi encontrada");
+      }
+      res.set("Content-Type", "image/png");
+      res.send(results[0].imagem);
+    })
+
+  }
 
   static async getEventosPorData7Dias(req, res) {
     const dataFiltro = new Date(req.params.data).toISOString().split("T");
-    const dataLimite = new Date(req.params.data);  
-    dataLimite.setDate(dataLimite.getDate() + 7);  
+    const dataLimite = new Date(req.params.data);
+    dataLimite.setDate(dataLimite.getDate() + 7);
     console.log("Data Fornecida:", dataFiltro[0], "\n");
     console.log("Data Limite:", dataLimite.toISOString().split("T")[0], "\n");
     const query = `SELECT * FROM evento`;
@@ -200,33 +218,34 @@ module.exports = class eventoController {
 
         const eventosSelecionados = results.filter(
           (evento) =>
-            new Date(evento.data_hora).toISOString().split("T")[0] >= dataFiltro[0] && new Date(evento.data_hora).toISOString().split("T")[0] < dataLimite.toISOString().split("T")[0]
+            new Date(evento.data_hora).toISOString().split("T")[0] >=
+              dataFiltro[0] &&
+            new Date(evento.data_hora).toISOString().split("T")[0] <
+              dataLimite.toISOString().split("T")[0]
         );
 
-        console.log(eventosSelecionados, '\n\n------------------------------------------\n\n');
+        console.log(
+          eventosSelecionados,
+          "\n\n------------------------------------------\n\n"
+        );
 
-        return res
-          .status(200)
-          .json({eventosSelecionados });
+        return res.status(200).json({ eventosSelecionados });
       });
     } catch (error) {
       console.log("Erro ao executar a querry: ", error);
       return res.status(500).json({ error: "Erro interno do Servidor" });
     }
   } // fim do 'getEventosPorData7Dias'
-
   static async getImagemEvento(req,res){
     const id = req.params.id;
 
-    const query = "SELECT imagem FROM evento WHERE id_evento=?";
-    connect.query(query,[id],(err,results)=>{
+    const querry = "SELECT imagem FROM evento WHERE id_evento=?";
+    connect.query(querry,[id],(err,results) => {
       if(err|| results.length === 0 || !results[0].imagem){
-        return res.status(404).send("Imagem não foi encontrada");
+        return res.status(404).send("Imagem não foi encontrada")
       }
       res.set("Content-Type", "image/png");
       res.send(results[0].imagem);
     })
-
-
   }
 };

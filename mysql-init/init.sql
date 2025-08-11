@@ -11,8 +11,8 @@ create table usuario (
     data_nascimento date not null
 );
 
-insert into usuario (name, email, password, cpf, data_nascimento) values
-('João Silva', 'joao.silva@example.com', '$2b$10$MBxqcvhFahRYGrw.sPyV3./3VtWippf6CO0cKuRspOOFUS5Yi/hJ6', '16123456789', '1990-01-15');
+    insert into usuario (name, email, password, cpf, data_nascimento) values
+    ('João Silva', 'joao.silva@example.com', '$2b$10$MBxqcvhFahRYGrw.sPyV3./3VtWippf6CO0cKuRspOOFUS5Yi/hJ6', '16123456789', '1990-01-15');
 
 create table organizador (
 id_organizador int auto_increment primary key,
@@ -105,3 +105,6 @@ create table log_evento (
 );
 
 ALTER TABLE evento ADD imagem LONGBLOB;
+
+ALTER TABLE evento ADD tipo_imagem VARCHAR(100);
+
