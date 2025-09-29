@@ -2,33 +2,27 @@ version: "3.8"
 
 services:
   app:
-    ##  O "." indica que a imagem do docker será construida no Diretório atual
-    build: . 
-    command: /bin/sh -c "npm install && npm start"
-    ## Mapeia a porta 5000 do container para porta 5000 da máquina 
-    ports: 
-      - "5000:5000"
-    ## Monta o diretório atual da máquina host no diretório /usr/app dentro do container
+    build: .  # O "." indica que a imagem será construída no diretório atual
+    command: /bin/sh -c "npm install && npm start"  # Comando para rodar o app
+    ports:
+      - "5000:5000"  # Mapeando a porta 5000 do contêiner para a 5000 na máquina
     volumes:
-      - .:/usr/app
-    ##Indica que o serviço app depende do serviço db
+      - .:/usr/app  # Mapeia o diretório atual da máquina para /usr/app no contêiner
+      - ./.env:/usr/app/.env  # Mapeia o .env para o contêiner
     depends_on:
-      - db
-
+      - db  # O serviço app depende do banco de dados db
 
   db:
-    image: mysql:8.0
-    ## Configura o container para reiniciar automaticamente caso ele pare.
-    restart: always
+    image: mysql:8.0  # Usando a imagem oficial do MySQL
+    restart: always  # Configuração para reiniciar o contêiner automaticamente
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: vio_leonardo
-    ## Mapeia a porta 3307 do container para porta 3306 da máquina
     ports:
-      - "3307:3307"
+      - "3306:3306"  # Porta padrão do MySQL
     volumes:
-      - db_data:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql  # Volume para persistência de dados do MySQL
+      - ./mysql-init:/docker-entrypoint-initdb.d  # Scripts de inicialização do banco de dados
 
 volumes:
-  db_data:
+  db_data:  # Volume persistente para dados do MySQL
