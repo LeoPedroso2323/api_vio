@@ -1,6 +1,6 @@
 const express = require("express"); //Importa o módulo Express
 const cors = require("cors");
- if (process.eventNames.NODE_ENV !== "production") {
+ if (process.env.NODE_ENV !== "production") {
   require("dotenv-safe").config();
  }
 const jwt = require("jsonwebtoken");
